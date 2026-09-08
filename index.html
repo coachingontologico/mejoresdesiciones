@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#17395c">
+<title>Subsecretaría de Empleo Formosa — Método para tomar mejores decisiones</title>
+<style>
+  :root{
+    --bg:#17395c;
+    --bg2:#102b47;
+    --card:#214d78;
+    --card2:#285d8d;
+    --white:#f7fbff;
+    --muted:#c7d9e8;
+    --accent:#63c7ef;
+    --accent2:#a9e7ff;
+    --line:rgba(255,255,255,.18);
+    --shadow:0 18px 45px rgba(0,0,0,.28);
+    --radius:24px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;width:100%;min-height:100%;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--white)}
+  body{overflow-x:hidden}
+  button,input,textarea{font:inherit}
+  button{cursor:pointer}
+
+  /* Presentación horizontal */
+  .deck{
+    width:100vw;
+    min-height:100vh;
+    display:flex;
+    flex-direction:row;
+    overflow-x:auto;
+    overflow-y:auto;
+    scroll-snap-type:x mandatory;
+    scroll-behavior:smooth;
+    scrollbar-width:auto;
+  }
+  .slide{
+    flex:0 0 100vw;
+    width:100vw;
+    min-height:100vh;
+    padding:clamp(22px,4vw,58px);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    position:relative;
+    overflow:visible;
+    scroll-snap-align:start;
+    background:
+      radial-gradient(circle at 85% 15%, rgba(99,199,239,.16), transparent 30%),
+      linear-gradient(135deg,var(--bg),var(--bg2));
+  }
+  .slide:nth-child(even){
+    background:
+      radial-gradient(circle at 12% 85%, rgba(99,199,239,.12), transparent 28%),
+      linear-gradient(135deg,#183f64,#102d4b);
+  }
+
+  .topline{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:18px}
+  .brand{font-size:.85rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent2);font-weight:800}
+  .counter{font-size:.85rem;color:var(--muted);font-weight:700}
+  h1,h2,h3,p{margin-top:0}
+  h1{font-size:clamp(2.4rem,6vw,6.4rem);line-height:.98;max-width:1100px;margin-bottom:20px}
+  h2{font-size:clamp(2rem,4.8vw,5rem);line-height:1.02;margin-bottom:18px}
+  h3{font-size:clamp(1.15rem,2vw,1.7rem)}
+  p{font-size:clamp(1rem,1.55vw,1.35rem);line-height:1.55;color:var(--muted)}
+  .lead{max-width:900px;font-size:clamp(1.15rem,2vw,1.65rem)}
+  .accent{color:var(--accent)}
+  .quote{
+    border-left:5px solid var(--accent);
+    padding:14px 20px;
+    margin:18px 0;
+    background:rgba(255,255,255,.06);
+    border-radius:0 16px 16px 0;
+    font-size:clamp(1.15rem,2vw,1.7rem);
+    line-height:1.45;
+  }
+
+  .cover{align-items:flex-start;justify-content:center}
+  .cover-badge{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:9px 15px;border:1px solid var(--line);
+    background:rgba(255,255,255,.07);border-radius:999px;
+    color:var(--accent2);font-weight:800;margin-bottom:22px
+  }
+  .cover h1 span{display:block}
+  .subtitle{font-size:clamp(1.1rem,2vw,1.55rem);max-width:780px;color:var(--muted)}
+  .qr-space{
+    position:absolute;right:clamp(22px,6vw,90px);bottom:clamp(25px,6vw,80px);
+    width:180px;height:180px;border:2px dashed rgba(255,255,255,.5);
+    border-radius:20px;display:flex;align-items:center;justify-content:center;
+    text-align:center;color:var(--muted);background:rgba(255,255,255,.05);
+    padding:20px;font-size:.9rem
+  }
+
+  .content{max-width:1200px;width:100%;margin:0 auto}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+  .grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px}
+  .card{
+    background:linear-gradient(145deg,rgba(40,93,141,.92),rgba(26,65,101,.92));
+    border:1px solid var(--line);border-radius:var(--radius);
+    padding:clamp(18px,2.2vw,30px);box-shadow:var(--shadow);
+  }
+  .card strong{color:var(--white)}
+  .icon{font-size:2.2rem;margin-bottom:10px}
+  .small{font-size:.92rem!important}
+  .muted{color:var(--muted)}
+
+  textarea,input[type="date"]{
+    width:100%;border:1px solid rgba(255,255,255,.22);
+    background:#f8fcff;color:#163650;border-radius:15px;
+    padding:14px 15px;outline:none;
+    transition:.2s;resize:vertical;
+  }
+  textarea{min-height:115px}
+  textarea:focus,input[type="date"]:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(99,199,239,.18)}
+  label{display:block;font-weight:800;margin:0 0 8px}
+  .field{margin-top:13px}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .send{
+    border:0;border-radius:999px;padding:11px 18px;
+    background:var(--accent);color:#082942;font-weight:900;
+    box-shadow:0 7px 20px rgba(0,0,0,.2)
+  }
+  .send:hover{filter:brightness(1.08)}
+  .clear{
+    border:1px solid var(--line);border-radius:999px;padding:10px 16px;
+    background:rgba(255,255,255,.06);color:var(--white);font-weight:800
+  }
+
+  .foda{
+    display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px
+  }
+  .foda .card{min-height:245px}
+  .foda h3{margin-bottom:6px}
+  .foda .card:nth-child(1){border-top:5px solid #7ed6a7}
+  .foda .card:nth-child(2){border-top:5px solid #72c8f2}
+  .foda .card:nth-child(3){border-top:5px solid #f2c56b}
+  .foda .card:nth-child(4){border-top:5px solid #e99b9b}
+
+  .wrapp{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+  .letter{
+    font-size:2.8rem;font-weight:1000;color:var(--accent);
+    line-height:1;margin-bottom:8px
+  }
+  .example{padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.06);font-size:.95rem;color:var(--muted);line-height:1.4}
+
+  .perspective{
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px
+  }
+  .perspective .card{min-height:250px}
+  .emoji{font-size:3rem}
+  .activity{
+    border:2px solid rgba(99,199,239,.35);
+    background:rgba(99,199,239,.08)
+  }
+
+  .gainloss{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+  .gain{border-top:5px solid #7ed6a7}
+  .loss{border-top:5px solid #e99b9b}
+
+  .depend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+  .depend .card{min-height:180px}
+  .inside{border-top:5px solid #7ed6a7}
+  .outside{border-top:5px solid #e99b9b}
+  .example-list{display:grid;gap:10px;margin-top:15px}
+  .example-row{
+    padding:13px 15px;border-radius:14px;background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.08);color:var(--muted);line-height:1.45
+  }
+  .example-row b{color:var(--white)}
+
+  .footer-note{
+    position:absolute;left:clamp(22px,4vw,58px);bottom:15px;
+    font-size:.75rem;color:rgba(255,255,255,.55)
+  }
+
+  .nav{
+    position:fixed;z-index:20;right:16px;bottom:16px;
+    display:flex;gap:7px;align-items:center;
+    padding:7px;background:rgba(8,28,47,.8);backdrop-filter:blur(12px);
+    border:1px solid var(--line);border-radius:999px
+  }
+  .nav button{
+    width:38px;height:38px;border:0;border-radius:50%;
+    background:rgba(255,255,255,.1);color:white;font-size:1.05rem;font-weight:900
+  }
+  .nav button:hover{background:rgba(99,199,239,.3)}
+  .progress{
+    position:fixed;z-index:19;left:0;top:0;height:4px;background:var(--accent);
+    width:10%;transition:width .25s
+  }
+  .hint{
+    position:fixed;z-index:18;left:50%;transform:translateX(-50%);
+    bottom:20px;color:rgba(255,255,255,.58);font-size:.75rem;
+    pointer-events:none
+  }
+
+  /* Barra lateral auxiliar solicitada para tablets */
+  .side-scroll{
+    position:fixed;right:0;top:10%;bottom:10%;width:8px;z-index:17;
+    background:rgba(255,255,255,.08);border-radius:99px;pointer-events:none
+  }
+  .side-scroll span{
+    display:block;width:100%;height:25%;border-radius:99px;
+    background:rgba(99,199,239,.8);position:absolute;top:0
+  }
+
+  @media (max-width:900px){
+    .slide{min-height:100vh;padding:22px 20px 78px}
+    .grid,.gainloss,.depend,.foda{grid-template-columns:1fr}
+    .grid4,.wrapp,.perspective{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .qr-space{position:relative;right:auto;bottom:auto;margin-top:24px;width:145px;height:145px}
+    .cover{justify-content:flex-start;padding-top:55px}
+    .card{padding:17px}
+    .footer-note{display:none}
+  }
+  @media (max-width:600px){
+    .grid4,.wrapp,.perspective{grid-template-columns:1fr}
+    .foda .card{min-height:0}
+    h1{font-size:clamp(2.25rem,11vw,4rem)}
+    h2{font-size:clamp(2rem,9vw,3.3rem)}
+    p{line-height:1.45}
+    textarea{min-height:100px}
+    .nav{right:9px;bottom:9px}
+    .hint{display:none}
+  }
+
+  /* Modo impresión: una diapositiva por página */
+  @media print{
+    @page{size:landscape;margin:0}
+    body{background:white}
+    .deck{overflow:visible;display:block}
+    .slide{width:100vw;height:100vh;min-height:100vh;page-break-after:always;overflow:hidden}
+    .nav,.progress,.hint,.side-scroll{display:none!important}
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="side-scroll" aria-hidden="true"><span id="scrollThumb"></span></div>
+
+<main class="deck" id="deck">
+
+  <!-- 1 -->
+  <section class="slide cover">
+    <div class="content">
+      <div class="cover-badge">FORMOSA · EXPERIENCIA PRÁCTICA</div>
+      <h1><span>Subsecretaría de Empleo Formosa</span><span class="accent">Método para tomar mejores decisiones</span></h1>
+      <p class="subtitle">Una charla práctica para decidir con más claridad en tu proyecto.</p>
+      <div class="qr-space">ESPACIO RESERVADO<br>PARA QR<br><small>Participación</small></div>
+    </div>
+    <div class="footer-note">Deslizá horizontalmente para avanzar</div>
+  </section>
+
+  <!-- 2 -->
+  <section class="slide">
+    <div class="content">
+      <div class="topline"><div class="brand">01 · Punto de partida</div><div class="counter">1 / 10</div></div>
+      <h2>¿Qué decisión estás <span class="accent">postergando?</span></h2>
+      <p class="lead">Nombrar la decisión es el primer paso para dejar de rodearla y empezar a observarla.</p>
+      <div class="card activity">
+        <label for="decision">Escribí la decisión que actualmente estás evitando o postergando.</label>
+        <textarea id="decision" placeholder="Estoy postergando..."></textarea>
+        <div class="actions">
+          <button class="send" onclick="sendField('decision','Mi decisión postergada')">Enviar al entrenador</button>
+          <button class="clear" onclick="clearField('decision')">Limpiar</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="slide">
+    <div class="content">
+      <div class="topline"><div class="brand">02 · Responsabilidad</div><div class="counter">2 / 10</div></div>
+      <h2>Decidir es <span class="accent">comprometerse</span></h2>
+      <div class="grid">
+        <div class="card">
+          <div class="icon">🧭</div>
+          <h3>Las decisiones nos trajeron hasta acá</h3>
+          <p>Cada elección, incluso las que no tomamos, fue construyendo el lugar desde el que hoy observamos nuestro proyecto.</p>
+        </div>
+        <div class="card">
+          <div class="icon">🤝</div>
+          <h3>Elegir implica hacerse cargo</h3>
+          <p>Decidir no significa controlar todo lo que sucederá. Significa asumir una elección y su parte de responsabilidad.</p>
+        </div>
+      </div>
+      <div class="quote">“No decidir también puede ser una decisión.”</div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="slide">
+    <div class="content">
+      <div class="topline"><div class="brand">03 · FODA</div><div class="counter">3 / 10</div></div>
+      <h2>FODA para tomar mejores <span class="accent">decisiones</span></h2>
+      <div class="foda">
+        <div class="card">
+          <h3>💪 Fortalezas</h3><p class="small">¿Con qué cuento hoy?</p>
+          <textarea id="fortalezas" placeholder="Recursos, capacidades, contactos, experiencia..."></textarea>
+          <button class="send" onclick="sendField('fortalezas','FODA — Fortalezas')">Enviar al entrenador</button>
+        </div>
+        <div class="card">
+          <h3>🚀 Oportunidades</h3><p class="small">¿Qué posibilidades puedo aprovechar?</p>
+          <textarea id="oportunidades" placeholder="Mercado, alianzas, recursos, oportunidades..."></textarea>
+          <button class="send" onclick="sendField('oportunidades','FODA — Oportunidades')">Enviar al entrenador</button>
+        </div>
+        <div class="card">
+          <h3>🧩 Debilidades</h3><p class="small">¿Qué me está limitando?</p>
+          <textarea id="debilidades" placeholder="Hábitos, conocimientos, recursos, organización..."></textarea>
+          <button class="send" onclick="sendField('debilidades','FODA — Debilidades')">Enviar al entrenador</button>
+        </div>
+        <div class="card">
+          <h3>⚠️ Amenazas</h3><p class="small">¿Qué riesgos externos observo?</p>
+          <textarea id="amenazas" placeholder="Competencia, cambios, contexto, riesgos..."></textarea>
+          <button class="send" onclick="sendField('amenazas','FODA — Amenazas')">Enviar al entrenador</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="slide">
+    <div class="content">
+      <div class="topline"><div class="brand">04 · Dinámica presencial</div><div class="counter">4 / 10</div></div>
+      <h2>Cambiar de lugar para <span class="accent">mirar</span></h2>
+      <p class="lead">Ahora no escribas en el celular. <strong>Levantate, participá y mirá tu situación desde otro lugar.</strong></p>
+      <div class="perspective">
+        <div class="card activity"><div class="emoji">🪄</div><h3>El mago</h3><p>Si un mago pudiera concederte un deseo, ¿cuál sería?</p></div>
+        <div class="card activity"><div class="emoji">👦</div><h3>Tu hijo</h3><p>Si tu hijo estuviera viviendo tu situación, ¿qué consejo le darías?</p></div>
+        <div class="card activity"><div class="emoji">🪞</div><h3>El espejo</h3><p>Si fueras el espejo de otra persona, ¿qué le mostrarías sobre vos?</p></div>
+        <div class="card activity"><div class="emoji">🐜</div><h3>El bichito</h3><p>Si un bichito estuviera en tu casa observándote todo el día, ¿qué diría de vos?</p></div>
+      </div>
+      <div class="quote">Objetivo: <strong>cambiar de perspectiva</strong> para observar la situación desde otro lugar.</div>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="slide">
+    <div class="content">
+      <div class="topline"><div class="brand">05 · Modelo WRAP</div><div class="counter">5 / 10</div></div>
+      <h2>El modelo <span class="accent">WRAP</span></h2>
+      <div class="wrapp">
+        <div class="card">
+          <div class="letter">W</div>
+          <h3>Widen your options</h3>
+          <p>Ampliar las alternativas.</p>
+          <div class="example">¿Qué otra posibilidad no estoy considerando?</div>
+          <div class="field">
+            <label for="wrapW">Mi reflexión:</label>
+            <textarea id="wrapW" placeholder="¿Qué alternativas puedo ampliar?"></textarea>
+          </div>
+          <button class="send" onclick="sendField('wrapW','WRAP — W: Ampliar alternativas')">Enviar al entrenador</button>
+        </div>
+
+        <div class="card">
+          <div class="letter">R</div>
+          <h3>Reality-test your assumptions</h3>
+          <p>Poner a prueba nuestras suposiciones.</p>
+          <div class="example">¿Qué evidencia tengo de que esto es realmente así?</div>
+          <div class="field">
+            <label for="wrapR">Mi reflexión:</label>
+            <textarea id="wrapR" placeholder="¿Qué estoy suponiendo y qué evidencia tengo?"></textarea>
+          </div>
+          <button class="send" onclick="sendField('wrapR','WRAP — R: Poner a prueba suposiciones')">Enviar al entrenador</button>
+        </div>
+
+        <div class="card">
+          <div class="letter">A</div>
+          <h3>Attain distance before deciding</h3>
+          <p>Tomar distancia antes de decidir.</p>
+          <div class="example">¿Qué vería si lo observara desde afuera?</div>
+          <div class="field">
+            <label for="wrapA">Mi reflexión:</label>
+            <textarea id="wrapA" placeholder="Si tomara distancia, ¿qué observaría?"></textarea>
+          </div>
+          <button class="send" onclick="sendField('wrapA','WRAP — A: Tomar distancia')">Enviar al entrenador</button>
+        </div>
+
+        <div class="card">
+          <div class="letter">P</div>
+          <h3>Prepare to be wrong</h3>
+          <p>Prepararse para equivocarse.</p>
+          <div class="example">¿Qué haré si la decisión no sale como espero?</div>
+          <div class="field">
+            <label for="wrapP">Mi reflexión:</label>
+            <textarea id="wrapP" placeholder="Si me equivoco, ¿qué haré?"></textarea>
+          </div>
+          <button class="send" onclick="sendField('wrapP','WRAP — P: Prepararse para equivocarse')">Enviar al entrenador</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section class="slide">
+    <div class="content">
+      <div class="topline"><div class="brand">06 · Alternativas</div><div class="counter">6 / 10</div></div>
+      <h2>Ampliar <span class="accent">alternativas</span></h2>
+      <div class="grid">
+        <div class="card">
+          <div class="icon">🔀</div>
+          <h3>No siempre es A o B</h3>
+          <p>Cuando reducimos una situación a dos opciones, podemos estar dejando afuera posibilidades valiosas.</p>
+        </div>
+        <div class="card">
+          <div class="icon">⏸️</div>
+          <h3>No decidir también puede ser una opción</h3>
+          <p>Incluso postergar puede ser una decisión consciente, siempre que sepamos por qué elegimos hacerlo y qué consecuencias aceptamos.</p>
+        </div>
+      </div>
+      <div class="quote">Pregunta poderosa: <strong>“¿Qué opción aparecería si no estuviera obligado a elegir solamente entre A y B?”</strong></div>
+    </div>
+  </section>
+
+  <!-- 8 -->
+  <section class="slide">
+    <div class="content">
+      <div class="topline"><div class="brand">07 · Ganancias y pérdidas</div><div class="counter">7 / 10</div></div>
+      <h2>¿Qué gano y <span class="accent">qué pierdo?</span></h2>
+      <p class="lead">Toda decisión implica una ganancia y una pérdida. Mirarlas de frente permite decidir con mayor claridad.</p>
+      <div class="gainloss">
+        <div class="card gain">
+          <h3>🟢 Con esta decisión gano:</h3>
+          <textarea id="gano" placeholder="¿Qué obtengo, habilito o recupero?"></textarea>
+        </div>
+        <div class="card loss">
+          <h3>🔴 Con esta decisión pierdo:</h3>
+          <textarea id="pierdo" placeholder="¿Qué dejo atrás, resigno o cambio?"></textarea>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="send" onclick="sendFields(['gano','pierdo'],'Ganancias y pérdidas')">Enviar al entrenador</button>
+      </div>
+      <p class="small">Observá especialmente qué ganás, sin negar aquello que dejás atrás.</p>
+    </div>
+  </section>
+
+  <!-- 9 -->
+  <section class="slide">
+    <div class="content">
+      <div class="topline"><div class="brand">08 · Ámbito de decisión</div><div class="counter">8 / 10</div></div>
+      <h2>¿Esta decisión <span class="accent">me corresponde?</span></h2>
+      <p class="lead">Antes de decidir, separá aquello sobre lo que tenés poder de acción de aquello que pertenece a otras personas.</p>
+
+      <div class="depend">
+        <div class="card inside">
+          <div class="icon">🟢</div>
+          <h3>Lo que me corresponde</h3>
+          <p>Son decisiones, acciones y límites que están dentro de mi ámbito de elección.</p>
+          <div class="example-row">
+            <b>Ejemplo:</b> Quiero aumentar el precio de mi producto. <strong>El precio que decido cobrar depende de mí.</strong>
+          </div>
+          <div class="field">
+            <label for="meCorresponde">¿Qué parte de mi situación sí depende de mí?</label>
+            <textarea id="meCorresponde" placeholder="Escribí qué decisión o acción está dentro de tu ámbito..."></textarea>
+          </div>
+          <button class="send" onclick="sendField('meCorresponde','Lo que me corresponde')">Enviar al entrenador</button>
+        </div>
+
+        <div class="card outside">
+          <div class="icon">🔴</div>
+          <h3>Lo que depende de otros</h3>
+          <p>Son las reacciones, decisiones, emociones o conductas de otras personas que no puedo controlar.</p>
+          <div class="example-row">
+            <b>Ejemplo:</b> Me preocupa que mis clientes se enojen. <strong>La reacción del cliente no depende completamente de mí.</strong>
+          </div>
+          <div class="field">
+            <label for="dependeOtros">¿Qué parte de mi situación depende de otros?</label>
+            <textarea id="dependeOtros" placeholder="Escribí qué reacción, decisión o conducta pertenece a otra persona..."></textarea>
+          </div>
+          <button class="send" onclick="sendField('dependeOtros','Lo que depende de otros')">Enviar al entrenador</button>
+        </div>
+      </div>
+
+      <div class="example-list">
+        <div class="example-row"><b>Empleado:</b> despedirlo depende de mí. Cómo se sienta, no.</div>
+        <div class="example-row"><b>Delegar:</b> decidir delegar depende de mí. Cómo ejecutará la tarea la otra persona, no completamente.</div>
+        <div class="example-row"><b>Cliente:</b> poner un límite depende de mí. Si seguirá comprando, depende de su decisión.</div>
+      </div>
+
+      <div class="quote">La pregunta clave: <strong>“¿Qué parte de esta situación sí está dentro de mi ámbito de decisión?”</strong></div>
+    </div>
+  </section>
+
+  <!-- 10 -->
+  <section class="slide">
+    <div class="content">
+      <div class="topline"><div class="brand">09 · De la decisión a la acción</div><div class="counter">9 / 10</div></div>
+      <h2>Decidir es comprometerse con la <span class="accent">acción</span></h2>
+      <div class="quote">“Una decisión que no se transforma en acción queda en una intención.”</div>
+      <div class="card">
+        <div class="field"><label for="miDecision">Mi decisión es:</label><textarea id="miDecision" placeholder="Escribí tu decisión concreta..."></textarea></div>
+        <div class="field"><label for="primeraAccion">Mi primera acción será:</label><textarea id="primeraAccion" placeholder="¿Cuál es la primera acción observable?"></textarea></div>
+        <div class="field"><label for="fecha">La haré el día:</label><input type="date" id="fecha"></div>
+        <div class="actions">
+          <button class="send" onclick="sendFields(['miDecision','primeraAccion','fecha'],'Compromiso con la acción')">Enviar al entrenador</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 -->
+  <section class="slide cover">
+    <div class="content">
+      <div class="topline"><div class="brand">10 · Cierre</div><div class="counter">10 / 10</div></div>
+      <h2>Subsecretaría de Empleo <span class="accent">Formosa</span></h2>
+      <div class="quote">“Gracias por decidir estar aquí.”</div>
+      <p class="lead">Es mejor decidir y aprender de la decisión que quedar inmóvil esperando una certeza que quizá nunca llegue.</p>
+      <div class="card" style="max-width:760px;margin-top:15px">
+        <p style="margin:0;color:var(--white);font-weight:800">Llevate una decisión. Convertíla en una acción. Y empezá.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+
+
+<script>
+(function(){
+  const deck=document.getElementById('deck');
+  const slides=[...document.querySelectorAll('.slide')];
+  const progress=document.getElementById('progress');
+  const thumb=document.getElementById('scrollThumb');
+
+  function updateScrollUI(){
+    const max=Math.max(1,deck.scrollWidth-deck.clientWidth);
+    const ratio=Math.max(0,Math.min(1,deck.scrollLeft/max));
+    progress.style.width=Math.max(8,ratio*100)+'%';
+
+    const thumbHeight=Math.max(12,100*(deck.clientWidth/deck.scrollWidth));
+    thumb.style.height=thumbHeight+'%';
+    thumb.style.top=((100-thumbHeight)*ratio)+'%';
+  }
+  deck.addEventListener('scroll',updateScrollUI,{passive:true});
+  window.addEventListener('resize',updateScrollUI);
+  updateScrollUI();
+
+  // Flechas del teclado: avanzan lateralmente sin mostrar botones en pantalla.
+  document.addEventListener('keydown',(e)=>{
+    if(['ArrowRight','PageDown'].includes(e.key)){
+      e.preventDefault();
+      deck.scrollBy({left:window.innerWidth,behavior:'smooth'});
+    }
+    if(['ArrowLeft','PageUp'].includes(e.key)){
+      e.preventDefault();
+      deck.scrollBy({left:-window.innerWidth,behavior:'smooth'});
+    }
+  });
+
+  // Rueda del mouse: gesto horizontal natural para presentación.
+  deck.addEventListener('wheel',(e)=>{
+    if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){
+      e.preventDefault();
+      deck.scrollBy({left:e.deltaY,behavior:'auto'});
+    }
+  },{passive:false});
+
+  // Guardado local: los textos permanecen en este dispositivo.
+  document.querySelectorAll('textarea,input[type="date"]').forEach(el=>{
+    const key='decision_charla_'+el.id;
+    const saved=localStorage.getItem(key);
+    if(saved!==null) el.value=saved;
+    el.addEventListener('input',()=>localStorage.setItem(key,el.value));
+  });
+})();
+
+function getValue(id){
+  const el=document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+function clearField(id){
+  const el=document.getElementById(id);
+  if(el){
+    el.value='';
+    localStorage.removeItem('decision_charla_'+id);
+    el.focus();
+  }
+}
+function sendField(id,title){ sendFields([id],title); }
+function sendFields(ids,title){
+  const parts=ids.map(id=>{
+    const value=getValue(id);
+    const label=document.querySelector('label[for="'+id+'"]')?.innerText || id;
+    return value ? label+': '+value : label+': (sin completar)';
+  });
+  const text='Hola entrenador.\n\n*'+title+'*\n'+parts.join('\n');
+  const phone='543704097249';
+  const url='https://wa.me/'+phone+'?text='+encodeURIComponent(text);
+  window.open(url,'_blank','noopener');
+}
+</script>
+</body>
+</html>
